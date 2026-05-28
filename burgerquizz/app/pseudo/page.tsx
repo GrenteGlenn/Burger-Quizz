@@ -28,7 +28,7 @@ export default function PseudoScreen() {
     const timeout = setTimeout(async () => {
       const res = await fetch(
         `/api/players/check?pseudo=${encodeURIComponent(cleanPseudo)}`,
-        { cache: "no-store" }
+        { cache: "no-store" },
       );
 
       const data = await res.json();
@@ -72,6 +72,9 @@ export default function PseudoScreen() {
       return;
     }
 
+    localStorage.setItem("playerId", data.player.id);
+    localStorage.setItem("pseudo", data.player.pseudo);
+
     const playersRes = await fetch("/api/players", {
       cache: "no-store",
     });
@@ -82,26 +85,26 @@ export default function PseudoScreen() {
 
     router.push("/waiting");
   }
-
   return (
-    <div className="flex flex-1 flex-col px-6 pt-6">
+    <div className="flex flex-1 flex-col px-6 pt-6 bg-[#315DAE]">
       <div className="flex justify-center">
         <BurgerLogo />
       </div>
 
       <div className="mt-10">
-        <h1 className="font-display text-5xl uppercase leading-none">
+        <h1 className="font-bold text-4xl uppercase leading-none">
           Ton pseudo
         </h1>
 
         <p className="mt-3 font-text text-lg text-white/65">
-          C'est le nom que verra l'animateur sur le classement. Entre 2 et 20 caractères.
+          C'est le nom que verra l'animateur sur le classement. Entre 2 et 20
+          caractères.
         </p>
 
         <input
           value={pseudo}
           onChange={(e) => setPseudo(e.target.value)}
-          className="mt-6 h-16 w-full rounded-2xl border-2 border-[#F2B935] bg-[#FAEFD6] px-5 font-display text-3xl text-black outline-none shadow-[0_4px_0_#C77F3A]"
+          className="mt-6 h-16 w-full rounded-2xl border-2 border-[#F2B935] bg-[#FAEFD6] px-5 text-3xl text-black outline-none shadow-[0_4px_0_#C77F3A]"
         />
 
         {success && (
@@ -119,7 +122,9 @@ export default function PseudoScreen() {
 
       <div className="mt-auto pb-6">
         <BurgerButton onClick={handleSubmit}>
-          {loading ? "Chargement..." : "Rejoindre la partie"}
+          <span className="font-bold text-2xl">
+            {loading ? "Chargement..." : "Rejoindre la partie"}
+          </span>
         </BurgerButton>
       </div>
     </div>

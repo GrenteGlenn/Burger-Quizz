@@ -1,14 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PanelHeader from "@/components/Panel-header";
 import { socket } from "@/lib/socket";
 
-const rounds = [
-  { icon: "N", title: "Nuggets", subtitle: "En cours", active: true },
-  { icon: "✓", title: "Sel ou poivre", subtitle: "Terminée" },
-  { icon: "M", title: "Menus", subtitle: "6 questions" },
+type RoundKey = "nuggets" | "sel-poivre" | "menus";
+
+const rounds: {
+  key: RoundKey;
+  title: string;
+  icon: string;
+  answerPage: string;
+}[] = [
+  {
+    key: "nuggets",
+    title: "Nuggets",
+    icon: "N",
+    answerPage: "/answer/answerNug",
+  },
+  {
+    key: "sel-poivre",
+    title: "Sel ou poivre",
+    icon: "S/P",
+    answerPage: "/answer/answerSetP",
+  },
+  {
+    key: "menus",
+    title: "Menus",
+    icon: "M",
+    answerPage: "/answer/answerMenu",
+  },
 ];
+
+const answersByRound = {
+  nuggets: [
+    ["A", "#C72E25"],
+    ["B", "#F2B935"],
+    ["C", "#218F5B"],
+    ["D", "#5C3A8B"],
+  ],
+  "sel-poivre": [
+    ["SEL", "#218F5B"],
+    ["POIVRE", "#315DAE"],
+    ["LES_DEUX", "#C72E25"],
+  ],
+  menus: [
+    ["VRAI", "#218F5B"],
+    ["FAUX", "#C72E25"],
+  ],
+};
 
 const answers = [
   ["A", "Chauffeur de taxi.", "18%", "26j.", "#C72E25"],
@@ -24,6 +64,17 @@ type Player = {
 export default function PanelManchePage() {
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(
+    null,
+  );
+  const [secondsLeft, setSecondsLeft] = useState(7);
+  const [isQuestionOpen, setIsQuestionOpen] = useState(false);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const currentQuestionIdRef = useRef<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<RoundKey>("nuggets");
+  const currentRound = rounds.find((round) => round.key === selectedRound)!;
+  const currentAnswers = answersByRound[selectedRound];
 
   useEffect(() => {
     async function fetchPlayers() {
@@ -43,17 +94,125 @@ export default function PanelManchePage() {
 
     return () => {
       socket.off("leaderboard:update");
+
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
   }, []);
 
-  async function emitLeaderboardUpdate() {
-    const res = await fetch("/api/players", {
-      cache: "no-store",
+  async function startQuestion() {
+    if (!selectedAnswer) {
+      alert("Sélectionne d'abord la bonne réponse.");
+      return;
+    }
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    const res = await fetch("/api/questions/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        round: selectedRound,
+        correctAnswer: selectedAnswer,
+      }),
     });
 
-    const players = await res.json();
+    const data = await res.json();
 
-    socket.emit("leaderboard:update", players);
+    if (!data.success) return;
+
+    setCurrentQuestionId(data.question.id);
+    currentQuestionIdRef.current = data.question.id;
+    setSecondsLeft(7);
+    setIsQuestionOpen(true);
+
+    socket.emit("question:started", {
+      questionId: data.question.id,
+      round: selectedRound,
+      answerPage: currentRound.answerPage,
+      correctAnswer: selectedAnswer,
+      startedAt: data.question.startedAt,
+    });
+
+    let counter = 7;
+
+    timerRef.current = setInterval(() => {
+      counter -= 1;
+      setSecondsLeft(counter);
+
+      if (counter <= 0) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+
+        closeQuestion(data.question.id);
+      }
+    }, 1000);
+  }
+  async function closeQuestion(questionIdParam?: string) {
+    const questionId =
+      questionIdParam ?? currentQuestionIdRef.current ?? currentQuestionId;
+    if (!questionId) return;
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    setSecondsLeft(0);
+    setIsQuestionOpen(false);
+
+    const res = await fetch("/api/questions/close", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        questionId,
+      }),
+    });
+
+    const data = await res.json();
+
+    socket.emit("question:closed", data.question);
+  }
+  async function revealAnswer() {
+    const questionId = currentQuestionIdRef.current ?? currentQuestionId;
+
+    if (!questionId || !selectedAnswer) return;
+
+    const res = await fetch("/api/questions/reveal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        questionId,
+        correctAnswer: selectedAnswer,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    setLeaderboard(data.players);
+
+    socket.emit("leaderboard:update", data.players);
+    socket.emit("question:revealed", {
+      questionId,
+      round: selectedRound,
+      answerPage: currentRound.answerPage,
+      correctAnswer: selectedAnswer,
+      results: data.results,
+      players: data.players,
+    });
   }
   const connected = leaderboard.length;
 
@@ -68,35 +227,41 @@ export default function PanelManchePage() {
           </p>
 
           <div className="mt-4 space-y-3">
-            {rounds.map((round) => (
-              <div
-                key={round.title}
-                className={`flex items-center gap-3 rounded-lg border px-3 py-3 ${
-                  round.active
-                    ? "border-[#F2B935] bg-[#F2B935]/10"
-                    : "border-transparent"
-                }`}
-              >
-                <span
-                  className={`grid h-8 w-8 place-items-center rounded-md font-display text-sm ${
-                    round.active
-                      ? "bg-[#F2B935] text-black"
-                      : "bg-white/10 text-white/45"
-                  }`}
-                >
-                  {round.icon}
-                </span>
+            {rounds.map((round) => {
+              const isActive = selectedRound === round.key;
 
-                <div>
+              return (
+                <button
+                  key={round.key}
+                  onClick={() => {
+                    if (isQuestionOpen) return;
+                    setSelectedRound(round.key);
+                    setSelectedAnswer(null);
+                  }}
+                  className={`
+        flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition
+        ${
+          isActive
+            ? "border-[#F2B935] bg-[#F2B935]/10"
+            : "border-transparent hover:bg-white/5"
+        }
+      `}
+                >
+                  <span
+                    className={`
+          grid h-8 w-8 place-items-center rounded-md font-display text-sm
+          ${isActive ? "bg-[#F2B935] text-black" : "bg-white/10 text-white/45"}
+        `}
+                  >
+                    {round.icon}
+                  </span>
+
                   <p className="font-display text-sm uppercase leading-none">
                     {round.title}
                   </p>
-                  <p className="mt-1 font-text text-xs text-white/35">
-                    {round.subtitle}
-                  </p>
-                </div>
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </aside>
 
@@ -105,7 +270,7 @@ export default function PanelManchePage() {
             <div className="flex items-center gap-5">
               <div className="flex items-center gap-3">
                 <div className="grid h-14 w-14 place-items-center rounded-full border-4 border-[#F2B935] font-display text-2xl">
-                  4
+                  {secondsLeft}
                 </div>
                 <p className="font-text text-xs uppercase tracking-[0.18em] text-white/35">
                   Secondes
@@ -114,12 +279,38 @@ export default function PanelManchePage() {
                 </p>
               </div>
 
-              <button className="rounded-lg bg-[#FAEFD6] px-7 py-4 font-display text-sm uppercase text-black">
+              <button
+                onClick={startQuestion}
+                disabled={!selectedAnswer || isQuestionOpen}
+                className={`
+    rounded-lg px-7 py-4 font-display text-sm uppercase text-black shadow-[0_4px_0_rgba(0,0,0,.25)]
+    ${
+      selectedAnswer && !isQuestionOpen
+        ? "bg-[#69B95C] cursor-pointer"
+        : "bg-white/20 cursor-not-allowed opacity-50"
+    }
+  `}
+              >
+                Lancer la question
+              </button>
+
+              <button
+                onClick={() => closeQuestion()}
+                disabled={!isQuestionOpen}
+                className={`
+                  rounded-lg px-7 py-4 font-display text-sm uppercase text-black
+                  ${
+                    isQuestionOpen
+                      ? "bg-[#FAEFD6] cursor-pointer"
+                      : "bg-white/20 cursor-not-allowed opacity-50"
+                  }
+                `}
+              >
                 ■ Clôturer
               </button>
 
               <button
-                onClick={emitLeaderboardUpdate}
+                onClick={revealAnswer}
                 className="rounded-lg bg-[#F2B935] px-8 py-4 font-display text-sm uppercase text-black shadow-[0_4px_0_#C77F3A] cursor-pointer"
               >
                 Révéler la réponse →
@@ -136,8 +327,12 @@ export default function PanelManchePage() {
                   Réponse correcte
                 </p>
 
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  {answers.map(([letter, , , , color]) => {
+                <div
+                  className={`mt-4 grid gap-3 ${
+                    selectedRound === "menus" ? "grid-cols-2" : "grid-cols-2"
+                  }`}
+                >
+                  {currentAnswers.map(([letter, color]) => {
                     const isSelected = selectedAnswer === letter;
 
                     return (
@@ -145,13 +340,13 @@ export default function PanelManchePage() {
                         key={letter}
                         onClick={() => setSelectedAnswer(letter)}
                         className={`
-                grid h-20 place-items-center rounded-lg border font-display text-3xl transition
-                ${
-                  isSelected
-                    ? "border-[#FAEFD6] scale-105 shadow-[0_0_0_3px_rgba(250,239,214,.18)]"
-                    : "border-white/10 opacity-70 hover:opacity-100"
-                }
-              `}
+          grid h-20 place-items-center rounded-lg border font-display text-3xl uppercase transition
+          ${
+            isSelected
+              ? "scale-105 border-[#FAEFD6] shadow-[0_0_0_3px_rgba(250,239,214,.18)]"
+              : "border-white/10 opacity-70 hover:opacity-100"
+          }
+        `}
                         style={{
                           background: color,
                           color: "#000",
@@ -161,50 +356,6 @@ export default function PanelManchePage() {
                       </button>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* STATS */}
-              <div>
-                <p className="font-text text-xs uppercase tracking-[0.2em] text-white/35">
-                  Statistiques en direct &#40;animateur seul&#41;
-                </p>
-
-                <div className="mt-4 space-y-3">
-                  {answers.map(([letter, label, percent, count, color]) => (
-                    <div
-                      key={letter}
-                      className="relative overflow-hidden rounded-lg border border-white/10 bg-[#1A1812]"
-                    >
-                      <div
-                        className="absolute inset-y-0 left-0"
-                        style={{
-                          width: percent,
-                          background: color,
-                          opacity: 0.35,
-                        }}
-                      />
-
-                      <div className="relative grid grid-cols-[36px_1fr_auto_auto] items-center gap-3 px-4 py-3">
-                        <span
-                          className="grid h-8 w-8 place-items-center font-display text-sm text-black"
-                          style={{ background: color }}
-                        >
-                          {letter}
-                        </span>
-
-                        <span className="font-text text-sm font-bold">
-                          {label}
-                        </span>
-
-                        <span className="font-display text-xl">{percent}</span>
-
-                        <span className="font-text text-xs text-white/35">
-                          {count}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>

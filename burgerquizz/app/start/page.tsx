@@ -1,6 +1,7 @@
 import BurgerButton from "@/components/BurgerButton";
 import BurgerLogo from "@/components/BurgerLogo";
 import { PaintBlob } from "@/components/paintBlob";
+import { MoveRight } from "lucide-react";
 import Link from "next/link";
 const BP = {
   black: "#000000",
@@ -14,7 +15,7 @@ const BP = {
 
 export default function LandingScreen() {
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-8 text-center">
+    <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-8 text-center bg-[#315DAE]">
       <PaintBlob
         color={BP.yellow}
         className="-left-8 -top-4 h-28 w-32 sm:h-32 sm:w-36"
@@ -73,7 +74,7 @@ export default function LandingScreen() {
         <path d="M25 83Q80 108 135 83v8Q80 116 25 91Z" fill="#C77F3A" />
       </svg>
 
-      <h1 className="mt-10 font-display text-4xl uppercase leading-none">
+      <h1 className="mt-10 text-4xl uppercase leading-none font-bold ">
         La partie commence
         <br />
         dans un instant.
@@ -86,7 +87,11 @@ export default function LandingScreen() {
 
       <div className="mt-10 w-full">
         <Link href="/pseudo" className="w-full mt-10">
-          <BurgerButton>C'est parti</BurgerButton>
+          <BurgerButton>
+            <span className="font-weight-bold flex items-center justify-center">
+              C'est parti <MoveRight className="w-20" />
+            </span>
+          </BurgerButton>
         </Link>
       </div>
     </div>
