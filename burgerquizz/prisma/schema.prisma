@@ -16,4 +16,35 @@ model Player {
   pseudo    String   @unique
   score     Int      @default(0)
   createdAt DateTime @default(now())
+
+  answers PlayerAnswer[]
+}
+
+model GameQuestion {
+  id            String   @id @default(cuid())
+  round         String
+  status        String   @default("open") // open | closed | revealed
+  correctAnswer String?
+  startedAt     DateTime @default(now())
+  closedAt      DateTime?
+  revealedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  answers PlayerAnswer[]
+}
+
+model PlayerAnswer {
+  id             String   @id @default(cuid())
+  playerId       String
+  gameQuestionId String
+  answer         String
+  secondsLeft    Int
+  isCorrect      Boolean?
+  pointsEarned   Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  player       Player       @relation(fields: [playerId], references: [id])
+  gameQuestion GameQuestion @relation(fields: [gameQuestionId], references: [id])
+
+  @@unique([playerId, gameQuestionId])
 }

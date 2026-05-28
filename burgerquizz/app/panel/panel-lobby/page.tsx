@@ -36,6 +36,7 @@ export default function HostLobbyPage() {
       socket.off("players:joined");
     };
   }, []);
+  
 
   const connected = players.length;
   const remaining = MAX_PLAYERS - connected;

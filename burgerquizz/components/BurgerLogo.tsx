@@ -17,7 +17,7 @@ export default function BurgerLogo() {
   ]
   const Tile = ({ item }: any) => (
     <span
-      className={`grid h-12 w-9 place-items-center font-letter text-3xl shadow-md ${item[3]}`}
+      className={`grid h-12 w-9 place-items-center font-letter text-3xl shadow-md font-horse ${item[3]}`}
       style={{
         background: item[1],
         color: item[2],
@@ -28,7 +28,7 @@ export default function BurgerLogo() {
   )
 
   return (
-    <div className="flex flex-col items-center gap-1 leading-none">
+    <div className="flex flex-col items-center gap-1 leading-none ">
       <div className="flex gap-1">
         {top.map((item, i) => (
           <Tile key={i} item={item} />
