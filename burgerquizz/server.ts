@@ -2,10 +2,21 @@ import { createServer } from "http";
 import next from "next";
 import { Server } from "socket.io";
 
+// const dev = process.env.NODE_ENV !== "production";
+
+// const hostname = "localhost";
+// const port = 3000;
+
+// const app = next({
+//   dev,
+//   hostname,
+//   port,
+// });
+
 const dev = process.env.NODE_ENV !== "production";
 
-const hostname = "localhost";
-const port = 3000;
+const hostname = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+const port = Number(process.env.PORT) || 3000;
 
 const app = next({
   dev,
@@ -49,7 +60,11 @@ app.prepare().then(() => {
 
     socket.on("disconnect", () => {});
   });
-  httpServer.listen(port, () => {
-    console.log(`> Ready on http://${hostname}:${port}`);
-  });
+  // httpServer.listen(port, () => {
+  //   console.log(`> Ready on http://${hostname}:${port}`);
+  // });
+
+  httpServer.listen(port, hostname, () => {
+  console.log(`> Ready on http://${hostname}:${port}`);
+});
 });
