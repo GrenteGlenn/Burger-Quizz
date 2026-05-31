@@ -7,7 +7,7 @@ const answers = [
   ["A", "#D22F26"],
   ["B", "#F2B935"],
   ["C", "#218F5B"],
-  ["D", "#0124eb"],
+  ["D", "#5e8bff"],
 ];
 
 export default function AnswerPage() {
@@ -87,7 +87,7 @@ export default function AnswerPage() {
                 `}
               style={{ background: color }}
             >
-              <span className="grid h-24 w-36 place-items-center rounded-lg bg-black font-letter text-6xl text-[#FAEFD6]">
+              <span className="grid h-24 w-36 place-items-center rounded-lg font-letter text-6xl text-[#FAEFD6]">
                 {letter}
               </span>
             </button>

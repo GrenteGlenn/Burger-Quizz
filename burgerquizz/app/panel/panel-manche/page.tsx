@@ -37,11 +37,11 @@ const answersByRound = {
     ["A", "#C72E25"],
     ["B", "#F2B935"],
     ["C", "#218F5B"],
-    ["D", "#5C3A8B"],
+    ["D", "#5e8bff"],
   ],
   "sel-poivre": [
     ["SEL", "#218F5B"],
-    ["POIVRE", "#315DAE"],
+    ["POIVRE", "#5e8bff"],
     ["LES_DEUX", "#C72E25"],
   ],
   menus: [

@@ -57,38 +57,8 @@ export default function WrongAnswerScreen() {
       ))}
 
       <section className="relative z-10 flex min-h-[calc(100vh-80px)] flex-col items-center justify-center text-center">
-        <svg
-          viewBox="0 0 160 105"
-          className="mb-8 w-36"
-          role="img"
-          aria-label="Sad burger"
-        >
-          <ellipse cx="80" cy="38" rx="56" ry="30" fill="#D79750" />
-          <path
-            d="M25 42Q80 6 135 42v6Q80 18 25 48Z"
-            fill="#E8B374"
-            opacity=".7"
-          />
-          <ellipse cx="54" cy="35" rx="4" ry="5" fill="#FAEFD6" />
-          <ellipse cx="78" cy="25" rx="4" ry="5" fill="#FAEFD6" />
-          <ellipse cx="102" cy="34" rx="4" ry="5" fill="#FAEFD6" />
-          <circle cx="68" cy="48" r="4" fill="#111" />
-          <circle cx="91" cy="48" r="4" fill="#111" />
-          <path
-            d="M68 61Q80 54 94 61"
-            stroke="#111"
-            strokeWidth="4"
-            fill="none"
-            strokeLinecap="round"
-          />
-          <path
-            d="M30 63Q42 56 52 63Q62 56 72 63Q82 56 92 63Q104 56 118 63L122 69H28Z"
-            fill="#5E8C3A"
-          />
-          <path d="M28 66h104l-9 11Q89 84 38 77Z" fill="#F2B935" />
-          <rect x="25" y="72" width="110" height="13" rx="5" fill="#5A2F1B" />
-          <path d="M25 83Q80 108 135 83v8Q80 116 25 91Z" fill="#C77F3A" />
-        </svg>
+             <img className="mt-9 w-32 sm:mt-10 sm:w-40" src="image/burger-logo.svg" alt="Burger Logo" />
+
 
         <h1 className="font-display text-[3.2rem] uppercase leading-[0.85] tracking-tight sm:text-7xl">
           Aïe, vous êtes dans la sauce !.

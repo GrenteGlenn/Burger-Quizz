@@ -50,7 +50,6 @@ export default function AnswerMenuPage() {
           <span className="grid h-6 w-6 place-items-center rounded-full bg-[#F2B935] font-display text-black">
             {pseudo[0]?.toUpperCase()}
           </span>
-
           {pseudo}
         </div>
       </div>

@@ -49,7 +49,7 @@ export default function WaitingScreen() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 font-text text-sm font-bold">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-[#F2B935] font-display text-black">
-            M
+            {pseudo.charAt(0).toUpperCase()}
           </span>
           <span>{pseudo}</span>
         </div>
@@ -61,31 +61,11 @@ export default function WaitingScreen() {
 
       <div className="mt-24 flex flex-col items-center">
         <div className="grid h-40 w-40 place-items-center rounded-full border-4 border-dashed border-white/35">
-          <svg
-            viewBox="0 0 160 105"
-            className="w-32"
-            role="img"
-            aria-label="Burger mascot"
-          >
-            <ellipse cx="80" cy="38" rx="56" ry="30" fill="#D79750" />
-            <path
-              d="M25 42Q80 6 135 42v6Q80 18 25 48Z"
-              fill="#E8B374"
-              opacity=".7"
-            />
-            <ellipse cx="54" cy="35" rx="4" ry="5" fill="#FAEFD6" />
-            <ellipse cx="78" cy="25" rx="4" ry="5" fill="#FAEFD6" />
-            <ellipse cx="102" cy="34" rx="4" ry="5" fill="#FAEFD6" />
-            <circle cx="68" cy="48" r="4" fill="#111" />
-            <circle cx="91" cy="48" r="4" fill="#111" />
-            <path
-              d="M30 63Q42 56 52 63Q62 56 72 63Q82 56 92 63Q104 56 118 63L122 69H28Z"
-              fill="#5E8C3A"
-            />
-            <path d="M28 66h104l-9 11Q89 84 38 77Z" fill="#F2B935" />
-            <rect x="25" y="72" width="110" height="13" rx="5" fill="#5A2F1B" />
-            <path d="M25 83Q80 108 135 83v8Q80 116 25 91Z" fill="#C77F3A" />
-          </svg>
+          <img
+            className=" w-32 sm:mt-10 sm:w-40"
+            src="image/burger-logo.svg"
+            alt="Burger Logo"
+          />
         </div>
 
         <h1 className="mt-8 font-display font-bold text-4xl uppercase leading-none">

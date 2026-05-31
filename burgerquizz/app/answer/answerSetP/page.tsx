@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const answers = [
   ["SEL", "Sel", "#218F5B"],
-  ["POIVRE", "Poivre", "#0124eb"],
+  ["POIVRE", "Poivre", "#5e8bff"],
   ["LES_DEUX", "Les deux", "#D22F26"],
 ];
 
@@ -54,7 +54,7 @@ export default function AnswerSetPPage() {
       </div>
 
       <div className="mt-5 flex items-center justify-between">
-        <div className="flex items-center gap-2 font-display text-sm uppercase text-[#95C8E8]">
+        <div className="flex items-center gap-2 font-display text-sm uppercase text-[#95C8E8] ">
           Sel ou poivre
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function AnswerSetPPage() {
               `}
               style={{ background: color }}
             >
-              <span className="grid h-24 w-72 place-items-center rounded-lg bg-black font-letter text-6xl text-[#FAEFD6]">
+              <span className="grid h-24 w-72 place-items-center rounded-lg font-letter text-6xl text-[#FAEFD6]">
                 {label}
               </span>
             </button>

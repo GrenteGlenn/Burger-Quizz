@@ -17,7 +17,7 @@ export default function BurgerLogo() {
   ]
   const Tile = ({ item }: any) => (
     <span
-      className={`grid h-12 w-9 place-items-center font-letter text-3xl shadow-md font-horse ${item[3]}`}
+      className={`grid h-12 w-12 place-items-center font-letter text-5xl shadow-md font-horse ${item[3]}`}
       style={{
         background: item[1],
         color: item[2],
