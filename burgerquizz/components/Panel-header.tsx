@@ -30,13 +30,6 @@ export default function PanelHeader(props: PanelHeaderProps) {
             En partie
           </span>
 
-          {/* <button className="rounded bg-white/10 px-3 py-2 font-bold text-white">
-            Pause
-          </button>
-
-          <button className="rounded bg-[#C72E25]/25 px-3 py-2 font-bold text-[#F5A8A4]">
-            Fin de partie
-          </button> */}
         </div>
       </header>
     </div>

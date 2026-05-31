@@ -11,7 +11,6 @@ export default function AnswerSentPage() {
   const [score, setScore] = useState(0);
   const [answer, setAnswer] = useState("B");
 
-
   useEffect(() => {
     setPseudo(localStorage.getItem("pseudo") || "Mayo-Master");
     setAnswer(sessionStorage.getItem("lastAnswer") || "B");
@@ -40,7 +39,6 @@ export default function AnswerSentPage() {
 
       sessionStorage.setItem("pointsEarned", String(myResult.pointsEarned));
       sessionStorage.setItem("isCorrect", String(myResult.isCorrect));
-      
 
       if (myResult.isCorrect) {
         router.push("/success");
@@ -53,6 +51,22 @@ export default function AnswerSentPage() {
       socket.off("question:revealed");
     };
   }, [router]);
+
+  function formatAnswer(answer: string) {
+    const labels: Record<string, string> = {
+      SEL: "Sel",
+      POIVRE: "Poivre",
+      LES_DEUX: "Les deux",
+      VRAI: "Vrai",
+      FAUX: "Faux",
+      A: "A",
+      B: "B",
+      C: "C",
+      D: "D",
+    };
+
+    return labels[answer] ?? answer;
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#315DAE] px-4 pt-4 text-[#FAEFD6]">
@@ -97,7 +111,8 @@ export default function AnswerSentPage() {
         </p>
 
         <div className="mt-10 rounded-full bg-[#274D91] px-6 py-4 font-text text-sm font-bold text-white/45">
-          Ta réponse : <span className="text-[#95C8E8]">{answer}</span>
+          Ta réponse :
+          <span className="text-[#95C8E8]">{formatAnswer(answer)}</span>
         </div>
       </section>
     </main>

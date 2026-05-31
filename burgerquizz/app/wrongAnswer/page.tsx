@@ -27,6 +27,22 @@ export default function WrongAnswerScreen() {
     };
   }, [router]);
 
+  function formatAnswer(answer: string) {
+  const labels: Record<string, string> = {
+    SEL: "Sel",
+    POIVRE: "Poivre",
+    LES_DEUX: "Les deux",
+    VRAI: "Vrai",
+    FAUX: "Faux",
+    A: "A",
+    B: "B",
+    C: "C",
+    D: "D",
+  };
+
+  return labels[answer] ?? answer;
+}
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#CB2E25] px-6 pt-5 text-[#FAEFD6]">
       {/* Top bar */}
@@ -65,7 +81,7 @@ export default function WrongAnswerScreen() {
         </h1>
 
         <p className="mt-4 font-text text-lg font-bold">
-          <span className="text-[#95C8E8]"> C'était la réponse : {answer}</span>
+          <span className="text-[#95C8E8]"> C'était la réponse : {formatAnswer(answer)}</span>
         </p>
 
         <div className="mt-9 flex items-center gap-8">

@@ -101,6 +101,47 @@ export default function PanelManchePage() {
     };
   }, []);
 
+  async function resetGame() {
+    const confirmed = window.confirm(
+      "Attention : cela va supprimer tous les joueurs, réponses, questions et scores. Continuer ?",
+    );
+
+    if (!confirmed) return;
+
+    const secondConfirm = window.confirm(
+      "Dernière confirmation : cette action est irréversible. Réinitialiser la partie ?",
+    );
+
+    if (!secondConfirm) return;
+
+    const res = await fetch("/api/admin/reset-game", {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      alert(data.message || "Erreur pendant le reset");
+      return;
+    }
+
+    setLeaderboard([]);
+    setCurrentQuestionId(null);
+    currentQuestionIdRef.current = null;
+    setSelectedAnswer(null);
+    setSecondsLeft(7);
+    setIsQuestionOpen(false);
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    socket.emit("game:reset");
+
+    alert("Partie réinitialisée.");
+  }
+
   async function startQuestion() {
     if (!selectedAnswer) {
       alert("Sélectionne d'abord la bonne réponse.");
@@ -268,6 +309,12 @@ export default function PanelManchePage() {
         <section className="min-w-0">
           <div className="flex items-end justify-end border-b border-white/10 bg-[#1A1812] px-6 py-4">
             <div className="flex items-center gap-5">
+              <button
+                onClick={resetGame}
+                className="rounded-lg bg-[#C72E25] px-6 py-4 font-display text-sm uppercase text-white shadow-[0_4px_0_#7F1D1D] cursor-pointer"
+              >
+                Reset partie
+              </button>
               <div className="flex items-center gap-3">
                 <div className="grid h-14 w-14 place-items-center rounded-full border-4 border-[#F2B935] font-display text-2xl">
                   {secondsLeft}

@@ -41,6 +41,7 @@ export default function AnswerSetPPage() {
     sessionStorage.setItem("lastAnswer", answer);
     router.push("/sentanswer");
   }
+  
 
   return (
     <main className="min-h-screen bg-[#315DAE] px-4 pt-4 text-[#FAEFD6] ">

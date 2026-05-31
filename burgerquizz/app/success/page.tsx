@@ -30,6 +30,22 @@ export default function SuccessScreen() {
       socket.off("question:started");
     };
   }, [router]);
+
+  function formatAnswer(answer: string) {
+    const labels: Record<string, string> = {
+      SEL: "Sel",
+      POIVRE: "Poivre",
+      LES_DEUX: "Les deux",
+      VRAI: "Vrai",
+      FAUX: "Faux",
+      A: "A",
+      B: "B",
+      C: "C",
+      D: "D",
+    };
+
+    return labels[answer] ?? answer;
+  }
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#218F5B] px-6 pt-5 text-[#FAEFD6]">
       <div className="relative z-10 flex items-center justify-between">
@@ -60,15 +76,18 @@ export default function SuccessScreen() {
 
       {/* Content */}
       <section className="relative z-10 flex min-h-[calc(100vh-80px)] flex-col items-center justify-center text-center">
-            <img className="mt-9 w-32 sm:mt-10 sm:w-40" src="image/burger-logo.svg" alt="Burger Logo" />
-
+        <img
+          className="mt-9 w-32 sm:mt-10 sm:w-40"
+          src="image/burger-logo.svg"
+          alt="Burger Logo"
+        />
 
         <h1 className="font-display text-[3.2rem] uppercase leading-[0.85] tracking-tight sm:text-7xl">
           Chaud devant !
         </h1>
 
         <p className="mt-4 font-text text-lg font-bold">
-          <span className="text-[#95C8E8]"> Ta réponse : {answer}</span>
+          <span className="text-[#95C8E8]"> Ta réponse : {formatAnswer(answer)}</span>
         </p>
 
         <div className="mt-9 flex items-center gap-8">
