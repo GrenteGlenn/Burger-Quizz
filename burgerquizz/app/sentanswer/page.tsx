@@ -13,7 +13,7 @@ export default function AnswerSentPage() {
 
   useEffect(() => {
     setPseudo(localStorage.getItem("pseudo") || "Mayo-Master");
-    setAnswer(sessionStorage.getItem("lastAnswer") || "B");
+    setAnswer(sessionStorage.getItem("lastAnswer") || "lastAnswer");
 
     socket.on("question:revealed", (data) => {
       const playerId = localStorage.getItem("playerId");

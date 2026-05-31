@@ -114,7 +114,7 @@ export default function PanelManchePage() {
 
     if (!secondConfirm) return;
 
-    const res = await fetch("/api/admin/reset-game", {
+    const res = await fetch("/api/reset-bdd", {
       method: "DELETE",
     });
 
