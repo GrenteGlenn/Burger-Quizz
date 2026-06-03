@@ -105,11 +105,6 @@ export default function AnswerSentPage() {
           Nous préparons votre commande !
         </h1>
 
-        <p className="mt-5 max-w-70 font-text text-base font-bold leading-snug text-white/45">
-          Garde le ketchup pour plus tard, l'animateur dévoile la bonne réponse
-          dans un instant.
-        </p>
-
         <div className="mt-10 rounded-full bg-[#274D91] px-6 py-4 font-text text-sm font-bold text-white/45">
           Ta réponse :
           <span className="text-[#95C8E8]">{formatAnswer(answer)}</span>

@@ -77,12 +77,12 @@ export default function SuccessScreen() {
       {/* Content */}
       <section className="relative z-10 flex min-h-[calc(100vh-80px)] flex-col items-center justify-center text-center">
         <img
-          className="mt-9 w-32 sm:mt-10 sm:w-40"
+          className="mt-9 mb-9 w-32 sm:mt-10 sm:w-40"
           src="image/burger-logo.svg"
           alt="Burger Logo"
         />
 
-        <h1 className="font-display text-[3.2rem] uppercase leading-[0.85] tracking-tight sm:text-7xl">
+        <h1 className="font-display text-[3.2rem] uppercase leading-[1.2] tracking-tight sm:text-7xl">
           Chaud devant !
         </h1>
 

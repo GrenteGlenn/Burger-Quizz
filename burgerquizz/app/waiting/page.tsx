@@ -68,7 +68,7 @@ export default function WaitingScreen() {
           />
         </div>
 
-        <h1 className="mt-8 font-display font-bold text-4xl uppercase leading-none">
+        <h1 className="mt-8 font-display font-bold text-4xl uppercase leading-[1.2]">
           On prépare votre commande ...
         </h1>
 
